@@ -22,7 +22,7 @@ from shutil import make_archive
 from yolov3_deepsort import VideoTracker
 
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 UPLOAD_FOLDER = 'static/'
 ALLOWED_EXTENSIONS = {'mp4'}
@@ -85,4 +85,5 @@ def upload_file():
     else:
         return 'Selecione um arquivo com extensão MP4.'
 
-app.run(debug=True)
+if __name__== "__main__":
+    app.run(debug=True)
