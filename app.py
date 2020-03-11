@@ -12,7 +12,7 @@ from utils.parser import get_config
 
 #server
 import os
-from flask import Flask, request, redirect, escape
+from flask import Flask, request, redirect, escape, send_file
 from werkzeug.utils import secure_filename
 
 import bcrypt
@@ -45,7 +45,7 @@ def parse_args(video_path):
     parser.add_argument("--config_detection", type=str, default="./configs/yolov3.yaml")
     parser.add_argument("--config_deepsort", type=str, default="./configs/deep_sort.yaml")
     parser.add_argument("--ignore_display", dest="display", action="store_false", default=True)
-    parser.add_argument("--frame_interval", type=int, default=1)
+    parser.add_argument("--frame_interval", type=int, default=20)
     parser.add_argument("--display_width", type=int, default=800)
     parser.add_argument("--display_height", type=int, default=600)
     parser.add_argument("--save_path", type=str, default="./demo/demo.avi")
@@ -79,9 +79,9 @@ def upload_file():
         with VideoTracker(cfg, args) as vdo_trk:
             vdo_trk.run()
 
-        make_archive('pasta_compactada', 'zip', app.config['UPLOAD_FOLDER'] + hash_filename)
+        make_archive('annotations', 'zip', app.config['UPLOAD_FOLDER'] + hash_filename)
 
-        return hash_filename
+        return send_file('annotations.zip', attachment_filename='annotations.zip')
     else:
         return 'Selecione um arquivo com extensão MP4.'
 
