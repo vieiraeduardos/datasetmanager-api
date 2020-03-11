@@ -1,13 +1,30 @@
+import cv2
+import time
+import argparse
+import torch
+import numpy as np
+import csv
 
+from detector import build_detector
+from deep_sort import build_tracker
+from utils.draw import draw_boxes
+from utils.parser import get_config
+
+#server
 import os
 from flask import Flask, request, redirect, escape
 from werkzeug.utils import secure_filename
 
 import bcrypt
 
-app = Flask(__name__)
+from shutil import make_archive
 
-UPLOAD_FOLDER = 'static/uploads/'
+from yolov3_deepsort import VideoTracker
+
+
+app = Flask(_name_)
+
+UPLOAD_FOLDER = 'static/'
 ALLOWED_EXTENSIONS = {'mp4'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -22,7 +39,21 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/api/video', methods=['POST'])
+def parse_args(video_path):
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--VIDEO_PATH", type=str, default=video_path)
+    parser.add_argument("--config_detection", type=str, default="./configs/yolov3.yaml")
+    parser.add_argument("--config_deepsort", type=str, default="./configs/deep_sort.yaml")
+    parser.add_argument("--ignore_display", dest="display", action="store_false", default=True)
+    parser.add_argument("--frame_interval", type=int, default=1)
+    parser.add_argument("--display_width", type=int, default=800)
+    parser.add_argument("--display_height", type=int, default=600)
+    parser.add_argument("--save_path", type=str, default="./demo/demo.avi")
+    parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
+    
+    return parser.parse_args()
+
+@app.route('/api/videos', methods=['POST'])
 def upload_file():
     file = request.files['file']
    
@@ -32,11 +63,23 @@ def upload_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
 
-        hash_filename = bcrypt.hashpw(filename.encode('utf-8'), bcrypt.gensalt(14)).decode('utf-8').replace("/", "")
+        hash_filename = bcrypt.hashpw(filename.encode('utf-8'), bcrypt.gensalt(14)).decode('utf-8').replace("/", "").replace(".", "")
 
         os.mkdir(app.config['UPLOAD_FOLDER'] + hash_filename)
 
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], hash_filename + '/' + hash_filename + '.mp4'))
+        PATH_TO_VIDEO = os.path.join(app.config['UPLOAD_FOLDER'], hash_filename + '/' + hash_filename + '.mp4')
+
+        file.save(PATH_TO_VIDEO)
+
+        args = parse_args(PATH_TO_VIDEO)
+        cfg = get_config()
+        cfg.merge_from_file(args.config_detection)
+        cfg.merge_from_file(args.config_deepsort)
+
+        with VideoTracker(cfg, args) as vdo_trk:
+            vdo_trk.run()
+
+        make_archive('pasta_compactada', 'zip', app.config['UPLOAD_FOLDER'] + hash_filename)
 
         return hash_filename
     else:
