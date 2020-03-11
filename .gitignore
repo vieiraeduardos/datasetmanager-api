@@ -4,7 +4,7 @@
 
 #pastas estática
 static/
-
+detector/
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
