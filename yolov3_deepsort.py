@@ -11,6 +11,10 @@ from deep_sort import build_tracker
 from utils.draw import draw_boxes
 from utils.parser import get_config
 
+from Connection import insert_actor, get_last_id
+
+ids_in_memory = []
+
 class VideoTracker(object):
     def __init__(self, cfg, args):
         self.cfg = cfg
@@ -57,6 +61,11 @@ class VideoTracker(object):
             w = row[2]
             h = row[3]
             identity = row[4]
+
+            if(not (identity in ids_in_memory)):
+                insert_actor()
+                ids_in_memory.append(identity)
+
             video_name = self.args.VIDEO_PATH.split("/")[-2]
 
             crop_image = im[int(y):int(h), int(x):int(w)]
@@ -82,12 +91,12 @@ class VideoTracker(object):
         
 
     def run(self):
-        idx_frame = 0
+        idx_frame = get_last_id()
         
         path = os.getcwd()
 
         with open(path + '/static/{}/annotations.csv'.format(self.args.VIDEO_PATH.split("/")[-2]), 'w', newline='') as csvfile:
-            fieldnames = ['x', 'y', 'w', 'h', 'frame', 'code']
+            fieldnames = ['x', 'y', 'w', 'h', 'time', 'code']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
