@@ -33,7 +33,6 @@ class VideoTracker(object):
         self.deepsort = build_tracker(cfg, use_cuda=use_cuda)
         self.class_names = self.detector.class_names
 
-
     def __enter__(self):
         assert os.path.isfile(self.args.VIDEO_PATH), "Error: path error"
         self.vdo.open(self.args.VIDEO_PATH)
@@ -87,7 +86,7 @@ class VideoTracker(object):
                 if(face.any()):
                     cv2.imwrite("static/{}/{}/{}.jpg".format(video_name, identity, idx_frame), face)
 
-            writer.writerow({'x': x, 'y': y, 'w': w, 'h': h, 'frame': idx_frame, 'code': identity})
+            writer.writerow({'x': x, 'y': y, 'w': w, 'h': h, 'time': idx_frame, 'code': identity})
         
 
     def run(self):
@@ -100,7 +99,7 @@ class VideoTracker(object):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
 
-            while self.vdo.grab(): 
+            while self.vdo.grab():
                 idx_frame += 1
                 if idx_frame % self.args.frame_interval:
                     continue
