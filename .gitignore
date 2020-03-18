@@ -4,7 +4,8 @@
 
 #pastas estática
 static/
-detector/
+detector/YOLOv3/weight/yolov3-tiny.weights
+detector/YOLOv3/weight/yolov3.weights
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

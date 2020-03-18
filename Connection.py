@@ -11,7 +11,7 @@ def insert_actor():
 
     mydb.commit()
 
-    print(mycursor.rowcount, "record inserted.")
+    print(mycursor.rowcount, " record was inserted.")
 
 def get_last_id():
     mydb = init()
@@ -23,12 +23,14 @@ def get_last_id():
 
     last_id = myresult[-1][0]
 
+    print(last_id)
+
     return last_id
 
 def init():
     mydb = mysql.connector.connect(
         host="localhost",
-        user="eduardo",
+        user="root",
         passwd="eduardo",
         database="datasetmanagerdb"
     )

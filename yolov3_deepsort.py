@@ -14,6 +14,7 @@ from utils.parser import get_config
 from Connection import insert_actor, get_last_id
 
 ids_in_memory = []
+map_to_dataset = []
 
 class VideoTracker(object):
     def __init__(self, cfg, args):
@@ -61,8 +62,12 @@ class VideoTracker(object):
             h = row[3]
             identity = row[4]
 
+
+
             if(not (identity in ids_in_memory)):
                 insert_actor()
+                last_id = get_last_id()
+                map_to_dataset.append({'ID': last_id, 'Identity': identity})
                 ids_in_memory.append(identity)
 
             video_name = self.args.VIDEO_PATH.split("/")[-2]
@@ -79,18 +84,18 @@ class VideoTracker(object):
 
                 try:
                     path = os.getcwd()
-                    os.mkdir(path + "/static/{}/{}".format(video_name, identity))
+                    os.mkdir(path + "/static/{}/{}".format(video_name, map_to_dataset[identity - 1]['ID']))
                 except:
                     print("")
                     
                 if(face.any()):
-                    cv2.imwrite("static/{}/{}/{}.jpg".format(video_name, identity, idx_frame), face)
+                    cv2.imwrite("static/{}/{}/{}.jpg".format(video_name, map_to_dataset[identity - 1]['ID'], idx_frame), face)
 
-            writer.writerow({'x': x, 'y': y, 'w': w, 'h': h, 'time': idx_frame, 'code': identity})
+            writer.writerow({'x': x, 'y': y, 'w': w, 'h': h, 'time': idx_frame, 'code': map_to_dataset[identity - 1]['ID']})
         
 
     def run(self):
-        idx_frame = get_last_id()
+        idx_frame = 0
         
         path = os.getcwd()
 
