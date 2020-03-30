@@ -10,18 +10,17 @@ from deep_sort import build_tracker
 from utils.draw import draw_boxes
 from utils.parser import get_config
 
-#server
 import os
-from flask import Flask, request, redirect, escape, send_file
+from flask import Flask, request, redirect, escape, send_file, jsonify
 from werkzeug.utils import secure_filename
 
 import bcrypt
 
 from shutil import make_archive
 
-
 from yolov3_deepsort import VideoTracker
 
+from Connection import insert_person, get_persons
 
 app = Flask(__name__)
 
@@ -85,6 +84,25 @@ def upload_file():
         return send_file('annotations.zip', attachment_filename='annotations.zip')
     else:
         return 'Selecione um arquivo com extensão MP4.'
+
+
+@app.route("/api/persons/", methods=["POST"])
+def create_persons():
+    name = request.form.get("name")
+    email = request.form.get("email")
+
+    insert_person(name, email)
+
+    return "User {} ({}) was created successfully!".format(name, email)
+
+@app.route("/api/persons/", methods=["GET"])
+def search():
+    name = request.form.get("name")
+
+    persons = get_persons(name)
+
+    return jsonify(persons)
+
 
 if __name__== "__main__":
     app.run(debug=True)

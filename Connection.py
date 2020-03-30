@@ -11,7 +11,8 @@ def insert_actor():
 
     mydb.commit()
 
-    print(mycursor.rowcount, " record was inserted.")
+    print("Uma pessoa foi cadastrada com sucesso!")
+
 
 def get_last_id():
     mydb = init()
@@ -23,8 +24,6 @@ def get_last_id():
 
     last_id = myresult[-1][0]
 
-    print(last_id)
-
     return last_id
 
 def init():
@@ -35,6 +34,28 @@ def init():
         database="datasetmanagerdb"
     )
 
-    print(mydb)
-
     return mydb
+
+def insert_person(name, email):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = "INSERT INTO Persons (name, email) VALUES (%s, %s)"
+    val = (name, email)
+    
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    print("Uma pessoa foi cadastrada com sucesso!")
+
+
+def get_persons(name):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT * FROM Persons WHERE name LIKE '%{}%'".format(name))
+
+    myresult = mycursor.fetchall()
+
+    return myresult
