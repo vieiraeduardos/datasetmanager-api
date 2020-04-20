@@ -22,7 +22,10 @@ from yolov3_deepsort import VideoTracker
 
 from Connection import insert_person, get_persons
 
+from flask_cors import CORS
+
 app = Flask(__name__)
+CORS(app)
 
 UPLOAD_FOLDER = 'static/'
 ALLOWED_EXTENSIONS = {'mp4'}
@@ -53,8 +56,12 @@ def parse_args(video_path):
     
     return parser.parse_args()
 
-@app.route('/api/videos', methods=['POST'])
+@app.route('/api/videos', methods=['GET'])
 def upload_file():
+    return send_file('annotations.zip', attachment_filename='annotations.zip')
+
+@app.route('/api/videos', methods=['POST'])
+def get_file():
     file = request.files['file']
    
     if file.filename == '':
@@ -95,14 +102,12 @@ def create_persons():
 
     return "User {} ({}) was created successfully!".format(name, email)
 
-@app.route("/api/persons/", methods=["GET"])
-def search():
-    name = request.form.get("name")
-
+@app.route("/api/persons/<string:name>/", methods=["GET"])
+def search(name):
     persons = get_persons(name)
 
     return jsonify(persons)
 
 
 if __name__== "__main__":
-    app.run(debug=True)
+    app.run()
