@@ -59,3 +59,22 @@ def get_persons(name):
     myresult = mycursor.fetchall()
 
     return myresult
+
+
+def insert_video(filename="", path="", duration=""):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = ("INSERT INTO Videos(filename, path, duration) VALUES (%s, %s, %s)")
+    val = (filename, path, duration)
+
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    video_code = mycursor.lastrowid
+
+    print("Video was successfully inserted!")
+    print(video_code)
+
+    return video_code

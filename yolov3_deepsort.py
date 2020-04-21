@@ -11,7 +11,7 @@ from deep_sort import build_tracker
 from utils.draw import draw_boxes
 from utils.parser import get_config
 
-from Connection import insert_actor, get_last_id
+from Connection import insert_actor, get_last_id, insert_video, insert_annotation
 
 ids_in_memory = []
 map_to_dataset = []
@@ -52,7 +52,7 @@ class VideoTracker(object):
         if exc_type:
             print(exc_type, exc_value, exc_traceback)
 
-    def posprocessing(self, writer, idx_frame, im, outputs, start):
+    def posprocessing(self, writer, idx_frame, im, outputs, start, video_code):
         face_cascade = cv2.CascadeClassifier('demo/haarcascade_frontalface_default.xml')
 
         for row in outputs:
@@ -89,7 +89,13 @@ class VideoTracker(object):
                     print("")
                     
                 if(face.any()):
-                    cv2.imwrite("static/{}/{}/{}.jpg".format(video_name, map_to_dataset[identity - 1]['ID'], idx_frame), face)
+                    path_image = "static/{}/{}/{}.jpg".format(video_name, map_to_dataset[identity - 1]['ID'], idx_frame)
+
+                    # Insert annotations to database
+
+                    insert_annotation(video_code, x, y, w, h, idx_frame, path_image)
+
+                    cv2.imwrite(path_image, face)
 
             writer.writerow({'x': x, 'y': y, 'w': w, 'h': h, 'time': idx_frame, 'code': map_to_dataset[identity - 1]['ID']})
         
@@ -103,6 +109,13 @@ class VideoTracker(object):
             fieldnames = ['x', 'y', 'w', 'h', 'time', 'code']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
+
+            # Insert video to database
+            filename_video = self.args.VIDEO_PATH.split("/")[-2]
+            path_video = self.args.VIDEO_PATH
+            duration_video = 1
+
+            video_code = insert_video(filename=filename_video, path=path_video, duration=duration_video)
 
             while self.vdo.grab():
                 idx_frame += 1
@@ -130,7 +143,7 @@ class VideoTracker(object):
                     frame_count = int(self.vdo.get(cv2.CAP_PROP_FRAME_COUNT))
                     duration = frame_count/fps
 
-                    self.posprocessing(writer, idx_frame, ori_im, outputs, duration)
+                    self.posprocessing(writer, idx_frame, ori_im, outputs, duration, video_code)
 
                     # draw boxes for visualization
                     if len(outputs) > 0:
