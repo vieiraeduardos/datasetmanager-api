@@ -11,7 +11,7 @@ from utils.draw import draw_boxes
 from utils.parser import get_config
 
 import os
-from flask import Flask, request, redirect, escape, send_file, jsonify
+from flask import Flask, request, redirect, escape, send_file, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 
 import bcrypt
@@ -31,12 +31,6 @@ UPLOAD_FOLDER = 'static/'
 ALLOWED_EXTENSIONS = {'mp4'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-@app.route('/')
-def hello():
-    name = request.args.get("name", "World")
-    return f'Hello, {escape(name)}!'
-
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -88,7 +82,7 @@ def get_file():
 
         make_archive('annotations', 'zip', app.config['UPLOAD_FOLDER'] + hash_filename)
 
-        return send_file('annotations.zip', attachment_filename='annotations.zip')
+        return send_file('annotations.zip', attachment_filename='annotations.zip', as_attachment=True)
     else:
         return 'Selecione um arquivo com extensão MP4.'
 
@@ -108,6 +102,12 @@ def search(name):
 
     return jsonify(persons)
 
+@app.route('/api/image/')
+def get_image():
+    #path = "/home/eduardo/Documentos/datasetmanager-api/static/$2b$14$1E3be8L0k3WaP22jhMy6reFBRYE66wD4n7I2aSmig4VI8Plv13qS/19/200.jpg"
+    path = request.form.get("path")
+    
+    return send_file(path, attachment_filename="image.jpg")
 
 if __name__== "__main__":
-    app.run()
+    app.run(debug=True)
