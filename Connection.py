@@ -93,6 +93,17 @@ def insert_annotation(video_code, actor_video, x, y, w, h, time, path):
 
     print("Annotation was successfully inserted!")
 
+
+def get_annotations_by_video(video):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("select * from Annotations where Videos_code={}".format(video))
+
+    myresult = mycursor.fetchall()
+
+    return myresult
+
 def get_videos():
     mydb = init()
     mycursor = mydb.cursor()

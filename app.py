@@ -20,7 +20,7 @@ from shutil import make_archive
 
 from yolov3_deepsort import VideoTracker
 
-from Connection import insert_person, get_persons, get_videos
+from Connection import insert_person, get_persons, get_videos, get_annotations_by_video
 
 from flask_cors import CORS
 
@@ -110,6 +110,13 @@ def api_get_videos():
     result = get_videos()
 
     return jsonify(result)
+
+@app.route('/api/annotations/', methods=["GET"])
+def api_get_annotations():
+    
+    annotations = get_annotations_by_video(11)
+
+    return jsonify(annotations)
 
 
 if __name__== "__main__":
