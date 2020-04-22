@@ -90,10 +90,11 @@ class VideoTracker(object):
                     
                 if(face.any()):
                     path_image = "static/{}/{}/{}.jpg".format(video_name, map_to_dataset[identity - 1]['ID'], idx_frame)
+                    actor_video = map_to_dataset[identity - 1]['ID']
 
                     # Insert annotations to database
 
-                    insert_annotation(video_code, x, y, w, h, idx_frame, path_image)
+                    insert_annotation(video_code, actor_video, x, y, w, h, idx_frame, path_image)
 
                     cv2.imwrite(path_image, face)
 

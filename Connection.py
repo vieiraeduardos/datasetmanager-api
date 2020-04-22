@@ -80,15 +80,25 @@ def insert_video(filename="", path="", duration=""):
     return video_code
 
 
-def insert_annotation(video_code, x, y, w, h, time, path):
+def insert_annotation(video_code, actor_video, x, y, w, h, time, path):
     mydb = init()
     mycursor = mydb.cursor()
 
-    sql = ("INSERT INTO Annotations(Videos_code, x, y, w, h, time, path) VALUES (%s, %s, %s, %s, %s, %s, %s)")
-    val = (int(video_code), int(x), int(y), int(w), int(h), int(time), path)
+    sql = ("INSERT INTO Annotations(Videos_code, Actors_code, x, y, w, h, time, path) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
+    val = (int(video_code), int(actor_video), int(x), int(y), int(w), int(h), int(time), path)
 
     mycursor.execute(sql, val)
 
     mydb.commit()
 
     print("Annotation was successfully inserted!")
+
+def get_videos():
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("select * from Videos")
+
+    myresult = mycursor.fetchall()
+
+    return myresult

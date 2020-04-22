@@ -20,7 +20,7 @@ from shutil import make_archive
 
 from yolov3_deepsort import VideoTracker
 
-from Connection import insert_person, get_persons
+from Connection import insert_person, get_persons, get_videos
 
 from flask_cors import CORS
 
@@ -49,10 +49,6 @@ def parse_args(video_path):
     parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
     
     return parser.parse_args()
-
-@app.route('/api/videos', methods=['GET'])
-def upload_file():
-    return send_file('annotations.zip', attachment_filename='annotations.zip')
 
 @app.route('/api/videos', methods=['POST'])
 def get_file():
@@ -108,6 +104,13 @@ def get_image():
     path = request.form.get("path")
     
     return send_file(path, attachment_filename="image.jpg")
+
+@app.route('/api/videos/', methods=["GET"])
+def api_get_videos():
+    result = get_videos()
+
+    return jsonify(result)
+
 
 if __name__== "__main__":
     app.run(debug=True)
