@@ -98,7 +98,7 @@ def get_annotations_by_video(video):
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select * from Annotations where Videos_code={}".format(video))
+    mycursor.execute("select * from Annotations where Videos_code={} order by Actors_code".format(video))
 
     myresult = mycursor.fetchall()
 
@@ -108,7 +108,7 @@ def get_videos():
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select * from Videos")
+    mycursor.execute("select code, filename from Videos")
 
     myresult = mycursor.fetchall()
 

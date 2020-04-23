@@ -100,7 +100,14 @@ def search(name):
 
 @app.route('/api/image/')
 def get_image():
-    #path = "/home/eduardo/Documentos/datasetmanager-api/static/$2b$14$1E3be8L0k3WaP22jhMy6reFBRYE66wD4n7I2aSmig4VI8Plv13qS/19/200.jpg"
+    path = "static/$2b$14$1E3be8L0k3WaP22jhMy6reFBRYE66wD4n7I2aSmig4VI8Plv13qS/19/200.jpg"
+    #path = request.form.get("path")
+    
+    return send_file(path, attachment_filename="image.jpg")
+
+
+@app.route('/api/image/', methods=["POST"])
+def get_post_image():
     path = request.form.get("path")
     
     return send_file(path, attachment_filename="image.jpg")
