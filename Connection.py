@@ -113,3 +113,17 @@ def get_videos():
     myresult = mycursor.fetchall()
 
     return myresult
+
+
+def update_actor(actor, person):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = ("update Actors set Persons_code=%s where code=%s")
+    val = (person, actor)
+
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    print("Actor was successfully updated!")
