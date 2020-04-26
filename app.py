@@ -36,9 +36,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def parse_args(video_path):
+def parse_args(video_path, tags):
     parser = argparse.ArgumentParser()
     parser.add_argument("--VIDEO_PATH", type=str, default=video_path)
+    parser.add_argument("--tags", type=str, default=tags)
     parser.add_argument("--config_detection", type=str, default="./configs/yolov3.yaml")
     parser.add_argument("--config_deepsort", type=str, default="./configs/deep_sort.yaml")
     parser.add_argument("--ignore_display", dest="display", action="store_false", default=True)
@@ -53,7 +54,8 @@ def parse_args(video_path):
 @app.route('/api/videos', methods=['POST'])
 def get_file():
     file = request.files['file']
-   
+    tags = request.form.get("tags")
+
     if file.filename == '':
         return 'Selecione um arquivo com nome.'
 
@@ -68,7 +70,7 @@ def get_file():
 
         file.save(PATH_TO_VIDEO)
 
-        args = parse_args(PATH_TO_VIDEO)
+        args = parse_args(PATH_TO_VIDEO, tags)
         cfg = get_config()
         cfg.merge_from_file(args.config_detection)
         cfg.merge_from_file(args.config_deepsort)

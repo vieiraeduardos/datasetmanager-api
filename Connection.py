@@ -62,12 +62,12 @@ def get_persons(name):
     return myresult
 
 
-def insert_video(filename="", path="", duration=""):
+def insert_video(filename="", path="", duration="", tags=""):
     mydb = init()
     mycursor = mydb.cursor()
 
-    sql = ("INSERT INTO Videos(filename, path, duration) VALUES (%s, %s, %s)")
-    val = (filename, path, duration)
+    sql = ("INSERT INTO Videos(filename, path, duration, tags) VALUES (%s, %s, %s, %s)")
+    val = (filename, path, duration, tags)
 
     mycursor.execute(sql, val)
 

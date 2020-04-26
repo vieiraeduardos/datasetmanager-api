@@ -116,7 +116,7 @@ class VideoTracker(object):
             path_video = self.args.VIDEO_PATH
             duration_video = 1
 
-            video_code = insert_video(filename=filename_video, path=path_video, duration=duration_video)
+            video_code = insert_video(filename=filename_video, path=path_video, duration=duration_video, tags=self.args.tags)
 
             while self.vdo.grab():
                 idx_frame += 1
