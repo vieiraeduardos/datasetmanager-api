@@ -120,10 +120,12 @@ def api_get_videos():
 
     return jsonify(result)
 
-@app.route('/api/annotations/', methods=["GET"])
+@app.route('/api/annotations/', methods=["POST"])
 def api_get_annotations():
+
+    video = request.form.get("video")
     
-    annotations = get_annotations_by_video(12)
+    annotations = get_annotations_by_video(video)
 
     return jsonify(annotations)
 
