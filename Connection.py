@@ -29,9 +29,10 @@ def get_last_id():
 def init():
     mydb = mysql.connector.connect(
         host="localhost",
-        user="root",
+        user="eduardo",
         passwd="eduardo",
-        database="datasetmanagerdb"
+        database="datasetmanagerdb",
+        auth_plugin='mysql_native_password'
     )
 
     return mydb
@@ -98,7 +99,7 @@ def get_annotations_by_video(video):
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select * from Annotations where Videos_code={} order by Actors_code".format(video))
+    mycursor.execute("select * from Annotations inner join Actors where Videos_code={} and Actors.code = Annotations.Actors_code order by Annotations.Actors_code".format(video))
 
     myresult = mycursor.fetchall()
 
@@ -114,13 +115,27 @@ def get_videos():
 
     return myresult
 
+def get_actor(code):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("select * from Persons where code = {}".format(code))
+
+    myresult = mycursor.fetchone()
+
+    return myresult
+
 
 def update_actor(actor, person):
     mydb = init()
     mycursor = mydb.cursor()
 
-    sql = ("update Actors set Persons_code=%s where code=%s")
-    val = (person, actor)
+    p = get_actor(person)
+
+    print(p)
+
+    sql = ("update Actors set name=%s, email=%s where code=%s")
+    val = (p[1], p[2], actor)
 
     mycursor.execute(sql, val)
 
