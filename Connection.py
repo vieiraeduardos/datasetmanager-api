@@ -105,6 +105,16 @@ def get_annotations_by_video(video):
 
     return myresult
 
+def get_all_annotations():
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("select * from Annotations inner join Actors where Actors.code = Annotations.Actors_code and Annotations.isClusterized = 'false' order by Annotations.Actors_code")
+
+    myresult = mycursor.fetchall()
+
+    return myresult
+
 def get_videos():
     mydb = init()
     mycursor = mydb.cursor()
@@ -134,8 +144,8 @@ def update_actor(actor, person):
 
     print(p)
 
-    sql = ("update Actors set name=%s, email=%s where code=%s")
-    val = (p[1], p[2], actor)
+    sql = ("update Actors set name=%s, email=%s, Persons_code=%s where code=%s")
+    val = (p[1], p[2], person, actor)
 
     mycursor.execute(sql, val)
 

@@ -20,7 +20,7 @@ from shutil import make_archive
 
 from yolov3_deepsort import VideoTracker
 
-from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor
+from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations
 
 from flask_cors import CORS
 
@@ -120,12 +120,18 @@ def api_get_videos():
 
     return jsonify(result)
 
-@app.route('/api/annotations/', methods=["POST"])
+@app.route('/api/annotations', methods=["POST"])
 def api_get_annotations():
 
     video = request.form.get("video")
     
     annotations = get_annotations_by_video(video)
+
+    return jsonify(annotations)
+
+@app.route('/api/clusters/annotations', methods=["POST"])
+def api_get_annotations2():    
+    annotations = get_all_annotations()
 
     return jsonify(annotations)
 
