@@ -163,3 +163,15 @@ def delete_image(code):
     mydb.commit()
 
     print("Image was successfully removed!")
+
+def update_image(image, person):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = ("delete from Annotations where code = {}".format(image))
+    
+    mycursor.execute(sql)
+
+    mydb.commit()
+
+    print("Image was successfully updated!")
