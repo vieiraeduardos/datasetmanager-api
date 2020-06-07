@@ -20,7 +20,7 @@ from shutil import make_archive
 
 from yolov3_deepsort import VideoTracker
 
-from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations
+from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image
 
 from flask_cors import CORS
 
@@ -149,6 +149,12 @@ def api_get_name_actor(code):
     actor = get_actor(code)
 
     return jsonify(actor)
+
+@app.route('/api/images/<int:code>', methods=["DELETE"])
+def api_delete_image(code):
+    delete_image(code)
+
+    return "OK"
 
 if __name__== "__main__":
     app.run(debug=True)

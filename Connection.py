@@ -29,7 +29,7 @@ def get_last_id():
 def init():
     mydb = mysql.connector.connect(
         host="localhost",
-        user="eduardo",
+        user="root",
         passwd="eduardo",
         database="datasetmanagerdb",
         auth_plugin='mysql_native_password'
@@ -142,8 +142,6 @@ def update_actor(actor, person):
 
     p = get_actor(person)
 
-    print(p)
-
     sql = ("update Actors set name=%s, email=%s, Persons_code=%s where code=%s")
     val = (p[1], p[2], person, actor)
 
@@ -152,3 +150,16 @@ def update_actor(actor, person):
     mydb.commit()
 
     print("Actor was successfully updated!")
+
+
+def delete_image(code): 
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = ("delete from Annotations where code = {}".format(code))
+    
+    mycursor.execute(sql)
+
+    mydb.commit()
+
+    print("Image was successfully removed!")
