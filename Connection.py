@@ -37,12 +37,21 @@ def init():
 
     return mydb
 
-def insert_person(name, email):
+def insert_person(name, email, actor):
     mydb = init()
     mycursor = mydb.cursor()
 
-    sql = "INSERT INTO Persons (name, email) VALUES (%s, %s)"
-    val = (name, email)
+    mycursor.execute("SELECT Annotations.path FROM Actors INNER JOIN Annotations WHERE Actors.code = {}".format(actor))
+
+    myresult = mycursor.fetchone()
+
+    path = myresult[0]
+
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = "INSERT INTO Persons (name, email, profile_photo) VALUES (%s, %s, %s)"
+    val = (name, email, path)
     
     mycursor.execute(sql, val)
 
@@ -142,6 +151,7 @@ def update_actor(actor, person):
 
     p = get_actor(person)
 
+    print(person)
     sql = ("update Actors set name=%s, email=%s, Persons_code=%s where code=%s")
     val = (p[1], p[2], person, actor)
 
