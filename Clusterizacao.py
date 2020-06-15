@@ -10,7 +10,7 @@ from tqdm import tqdm
 from faces_clustering import silhuoette
 import keras.backend.tensorflow_backend as tb
 
-from Connection import insert_actor, get_last_id, insert_video, insert_annotation
+from Connection import insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
 
 class Clusterizacao:
 
@@ -96,6 +96,8 @@ class Clusterizacao:
 
             insert_annotation(video_code, actors[identity], 0, 0, 0, 0, 0, url)            
 
+        self.clusterizar()
+
     def get_number_clusters(self, clusters):
         num = []
 
@@ -104,3 +106,86 @@ class Clusterizacao:
                 num.append(item)
 
         return len(num)
+
+    def get_maximo(self, clusters):
+        num = 0
+
+        for item in clusters['cluster_agglomerative']:
+            if item > num:
+                num = item
+
+        return num
+
+    def clusterizar(self):
+        tb._SYMBOLIC_SCOPE.value = True
+        all_urls = []
+        all_faces = []
+        all_embs = []
+        all_bounds = []
+        faces_dict = {}
+        frames_url = []
+
+        annotations = get_all_annotations()
+
+        for annotation in annotations:
+            frames_url.append(annotation[1])
+
+        # Getting URLs
+        extractor = FeatureExtractor('senet50')
+
+        for url in tqdm(frames_url):
+            faces_dict[url] = extractor.get_embeddings(url)
+
+        for url in frames_url:
+            embs, faces, bounds = faces_dict[url]
+            for emb, face, bound in zip(embs, faces,bounds):
+                all_urls.append(url)
+                all_faces.append(face)
+                all_embs.append(emb)
+                all_bounds.append(bound)
+
+        dt_sw = pd.DataFrame(all_urls, columns=['urls'])
+        dt_sw['embeddings'] = all_embs
+        dt_sw['faces'] = all_faces
+        dt_sw['bounds'] = all_bounds
+
+        dt_sw.to_pickle('{}.pkl'.format("annotations"))
+
+        #clustering
+        dt_sw = pd.read_pickle('{}.pkl'.format("annotations"))
+
+        valid = dt_sw.embeddings.apply(lambda x: str(x) != '-')
+        dt_sw = dt_sw.loc[valid]
+
+        embs = [list(emb) for emb in dt_sw.embeddings.values]
+
+        clusters_silhouette = silhuoette(embs,alg = "agglomerative")
+
+        alg = 'agglomerative'
+        clusters = dt_sw.copy()
+        clusters['cluster_{}'.format(alg)] = clusters_silhouette
+
+        print(clusters[['cluster_agglomerative']])
+
+        print("---------")
+
+        tmp = np.array(clusters[['cluster_agglomerative']])
+
+        for i in range(len(annotations)):
+            actor = annotations[i][4]
+            person_code = annotations[i][3]
+
+            if person_code == None:
+                person = self.get_name(tmp[i], annotations[i], annotations, tmp)
+                
+                if(person != None):
+                    print("Actor = {} e Person = {}".format(actor, person))
+                    update_actor(actor, person)
+
+    def get_name(self, target, annotation, annotations, clusters):
+
+        for i in range(len(annotations)):
+            if clusters[i] == target and annotations[i][3] != None:
+                return annotations[i][3]
+
+        return None

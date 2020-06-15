@@ -6,7 +6,6 @@ import numpy as np
 import csv
 
 from detector import build_detector
-from deep_sort import build_tracker
 from utils.draw import draw_boxes
 from utils.parser import get_config
 
@@ -17,8 +16,6 @@ from werkzeug.utils import secure_filename
 import bcrypt
 
 from shutil import make_archive
-
-from yolov3_deepsort import VideoTracker
 
 from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image, update_image
 
@@ -53,39 +50,6 @@ def parse_args(video_path, tags):
     
     return parser.parse_args()
 
-@app.route('/api/videos', methods=['POST'])
-def get_file():
-    file = request.files['file']
-    tags = request.form.get("tags")
-
-    if file.filename == '':
-        return 'Selecione um arquivo com nome.'
-
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-
-        hash_filename = bcrypt.hashpw(filename.encode('utf-8'), bcrypt.gensalt(14)).decode('utf-8').replace("/", "").replace(".", "")
-
-        os.mkdir(app.config['UPLOAD_FOLDER'] + hash_filename)
-
-        PATH_TO_VIDEO = os.path.join(app.config['UPLOAD_FOLDER'], hash_filename + '/' + hash_filename + '.mp4')
-
-        file.save(PATH_TO_VIDEO)
-
-        args = parse_args(PATH_TO_VIDEO, tags)
-        cfg = get_config()
-        cfg.merge_from_file(args.config_detection)
-        cfg.merge_from_file(args.config_deepsort)
-
-        with VideoTracker(cfg, args) as vdo_trk:
-            vdo_trk.run()
-
-        make_archive('annotations', 'zip', app.config['UPLOAD_FOLDER'] + hash_filename)
-
-        return send_file('annotations.zip', attachment_filename='annotations.zip', as_attachment=True)
-    else:
-        return 'Selecione um arquivo com extensão MP4.'
-
 
 @app.route('/api/v2/videos/', methods=['POST'])
 def api_get_file():
@@ -112,6 +76,11 @@ def api_get_file():
     else:
         return 'Selecione um arquivo com extensão MP4.'
 
+@app.route('/api/clusterizar/', methods=['POST'])
+def api_clusterizar():
+    Clusterizacao().clusterizar()
+
+    return "OK"
 
 @app.route("/api/persons/", methods=["POST"])
 def api_create_persons():

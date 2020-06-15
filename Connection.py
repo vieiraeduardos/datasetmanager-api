@@ -118,7 +118,7 @@ def get_all_annotations():
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select * from Annotations inner join Actors where Actors.code = Annotations.Actors_code and Annotations.isClusterized = 'false' order by Annotations.Actors_code")
+    mycursor.execute("select Annotations.code, Annotations.path, Actors.name, Actors.Persons_code, Actors.code from Annotations inner join Actors  where Annotations.Actors_code = Actors.code order by Annotations.Actors_code")
 
     myresult = mycursor.fetchall()
 
@@ -129,6 +129,17 @@ def get_videos():
     mycursor = mydb.cursor()
 
     mycursor.execute("select code, filename from Videos")
+
+    myresult = mycursor.fetchall()
+
+    return myresult
+
+
+def get_all_videos():
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT Videos.code, Videos.path FROM Videos")
 
     myresult = mycursor.fetchall()
 
