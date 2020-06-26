@@ -108,7 +108,7 @@ def get_annotations_by_video(video):
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select * from Annotations inner join Actors inner join Persons where Videos_code={} and Actors.code = Annotations.Actors_code order by Annotations.Actors_code".format(video))
+    mycursor.execute("select * from Annotations inner join Actors inner join Persons where Videos_code={} and Actors.code = Annotations.Actors_code and Persons.code = Actors.Persons_code order by Annotations.Actors_code".format(video))
 
     myresult = mycursor.fetchall()
 
