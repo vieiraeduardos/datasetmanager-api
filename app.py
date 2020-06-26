@@ -1,21 +1,8 @@
-import cv2
-import time
-import argparse
-import torch
-import numpy as np
-import csv
-
-from detector import build_detector
-from utils.draw import draw_boxes
-from utils.parser import get_config
-
 import os
-from flask import Flask, request, redirect, escape, send_file, jsonify, send_from_directory
+from flask import Flask, request, redirect, escape, send_file, jsonify
 from werkzeug.utils import secure_filename
 
 import bcrypt
-
-from shutil import make_archive
 
 from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image, update_image
 
@@ -34,22 +21,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-def parse_args(video_path, tags):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--VIDEO_PATH", type=str, default=video_path)
-    parser.add_argument("--tags", type=str, default=tags)
-    parser.add_argument("--config_detection", type=str, default="./configs/yolov3.yaml")
-    parser.add_argument("--config_deepsort", type=str, default="./configs/deep_sort.yaml")
-    parser.add_argument("--ignore_display", dest="display", action="store_false", default=True)
-    parser.add_argument("--frame_interval", type=int, default=20)
-    parser.add_argument("--display_width", type=int, default=800)
-    parser.add_argument("--display_height", type=int, default=600)
-    parser.add_argument("--save_path", type=str, default="./demo/demo.avi")
-    parser.add_argument("--cpu", dest="use_cuda", action="store_false", default=True)
-    
-    return parser.parse_args()
-
 
 @app.route('/api/v2/videos/', methods=['POST'])
 def api_get_file():
