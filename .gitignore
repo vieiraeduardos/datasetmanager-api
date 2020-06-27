@@ -3,10 +3,9 @@
 # Edit at https://www.gitignore.io/?templates=python
 
 #pastas estática
-annotations.zip
+annotations.pkl
 static/*
-detector/YOLOv3/weight/yolov3-tiny.weights
-detector/YOLOv3/weight/yolov3.weights
+demo/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
