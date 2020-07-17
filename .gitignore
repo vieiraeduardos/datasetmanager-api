@@ -4,7 +4,6 @@
 
 #pastas estática
 annotations.pkl
-static/*
 demo/*
 
 ### Python ###

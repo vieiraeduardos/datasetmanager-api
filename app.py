@@ -1,14 +1,16 @@
 import os
-from flask import Flask, request, redirect, escape, send_file, jsonify
+from flask import Flask, request, redirect, escape, send_file, jsonify, Response
 from werkzeug.utils import secure_filename
-
+import numpy as np
 import bcrypt
-
-from Connection import insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image, update_image
+import io
+import csv
+from Connection import updateAnnotations, getAnnotationsByPerson, getAllPersons, insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image, update_image
 
 from flask_cors import CORS
 
 from Clusterizacao import Clusterizacao
+from controllers.FileController import FileControler
 
 app = Flask(__name__)
 CORS(app)
@@ -21,6 +23,45 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+
+@app.route('/api/reports/csv')
+def download_report():
+    result = get_all_annotations()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    line = ['Annotations_code, path, name, Persons_code, Actors_code, isRight']
+    writer.writerow(line)
+
+    for row in result:
+        line = [str(row[0]) + ',' + str(row[1]) + ',' + str(row[2]) + ',' + str(row[3]) + ',' + str(row[4]) + ',' + str(row[5])]
+        writer.writerow(line)
+
+    output.seek(0)
+
+    return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=employee_report.csv"})
+
+@app.route("/api/imports/", methods=["POST"])
+def api_upload_pkl():
+    file = request.files['file']
+    
+    filename = secure_filename(file.filename)
+    
+    hash_filename = bcrypt.hashpw(filename.encode('utf-8'), bcrypt.gensalt(14)).decode('utf-8').replace("/", "").replace(".", "")
+
+    os.mkdir(app.config['UPLOAD_FOLDER'] + hash_filename)
+
+    PATH_TO_PKL = os.path.join(app.config['UPLOAD_FOLDER'], hash_filename + '/' + hash_filename + '.pkl')
+
+    file.save(PATH_TO_PKL)
+
+    fileController = FileControler(file_path=PATH_TO_PKL)
+
+    if fileController.handleFile():
+        return "OK"
 
 @app.route('/api/v2/videos/', methods=['POST'])
 def api_get_file():
@@ -98,11 +139,38 @@ def api_get_annotations():
 
     return jsonify(annotations)
 
+
+@app.route('/api/persons/<int:person_code>/annotations/', methods=["GET"])
+def api_get_annotations_by_person(person_code):
+    annotations = getAnnotationsByPerson(person_code)
+
+    return jsonify(annotations)
+
+@app.route('/api/annotations/', methods=["PUT"])
+def api_update_annotations():
+    wrongAnnotations = request.form.getlist('wrongAnnotations[]')
+
+    wrongAnnotations = str(wrongAnnotations[0]).split(",")
+    print(wrongAnnotations)
+    n = len(wrongAnnotations)
+
+    for i in range(n):
+        print(wrongAnnotations[i])
+        updateAnnotations(wrongAnnotations[i])
+
+    return "OK"
+
 @app.route('/api/clusters/annotations', methods=["POST"])
 def api_get_annotations2():    
     annotations = get_all_annotations()
 
     return jsonify(annotations)
+
+@app.route('/api/persons/', methods=["GET"])
+def api_get_persons():    
+    persons = getAllPersons()
+
+    return jsonify(persons)
 
 @app.route('/api/actors/', methods=["PUT"])
 def api_update_actor():

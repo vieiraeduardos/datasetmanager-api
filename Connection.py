@@ -32,7 +32,6 @@ def init():
         user="root",
         passwd="eduardo",
         database="datasetmanagerdb",
-        auth_plugin='mysql_native_password'
     )
 
     return mydb
@@ -58,6 +57,94 @@ def insert_person(name, email, actor):
     mydb.commit()
 
     print("Uma pessoa foi cadastrada com sucesso!")
+
+def createActor(name="", email="", persons_code=0):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = "INSERT INTO Actors (name, email, Persons_code) VALUES (%s, %s, %s)"
+    val = (name, email, persons_code)
+    
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    actor_code = mycursor.lastrowid
+
+    print("Uma pessoa foi cadastrada com sucesso!")
+
+    return actor_code
+
+def getVideoCodeByFilename(filename):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT code FROM Videos WHERE filename = '{}'".format(filename))
+
+    myresult = mycursor.fetchone()
+
+    return myresult[0]
+
+def updateAnnotations(code):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    sql = ("update Annotations set isRight=false where code={}".format(code))
+
+    mycursor.execute(sql)
+
+    mydb.commit()
+
+    print("Annotation was successfully updated!")
+
+
+
+def getAnnotationsByPerson(person_code):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("select Annotations.code, Actors.name, Annotations.path from Annotations inner join Actors inner join Persons on Actors.code = Annotations.Actors_code and Persons.code = Actors.Persons_code and Persons.code = {} order by Annotations.Actors_code".format(person_code))
+
+    myresult = mycursor.fetchall()
+
+    return myresult
+
+def getAllPersons():
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT * FROM Persons")
+
+    myresult = mycursor.fetchall()
+
+    return myresult
+
+def getPersonCodeByName(name):
+    mydb = init()
+    mycursor = mydb.cursor()
+
+    mycursor.execute("SELECT code FROM Persons WHERE name = '{}'".format(name))
+
+    myresult = mycursor.fetchone()
+
+    return myresult[0]
+
+def createPerson(name="", email="", profile_photo=""):
+    mydb = init()
+    mycursor = mydb.cursor()
+    
+    sql = "INSERT INTO Persons (name, email, profile_photo) VALUES (%s, %s, %s)"
+    val = (name, email, profile_photo)
+    
+    mycursor.execute(sql, val)
+
+    mydb.commit()
+
+    print("Uma pessoa foi cadastrada com sucesso!")
+
+    person_code = mycursor.lastrowid
+
+    return person_code
 
 
 def get_persons(name):
@@ -118,7 +205,7 @@ def get_all_annotations():
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select Annotations.code, Annotations.path, Actors.name, Actors.Persons_code, Actors.code from Annotations inner join Actors  where Annotations.Actors_code = Actors.code order by Annotations.Actors_code")
+    mycursor.execute("select Annotations.code, Annotations.path, Actors.name, Actors.Persons_code, Actors.code, Annotations.isRight from Annotations inner join Actors  where Annotations.Actors_code = Actors.code order by Annotations.Actors_code")
 
     myresult = mycursor.fetchall()
 
