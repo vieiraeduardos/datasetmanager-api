@@ -137,6 +137,8 @@ def api_get_annotations():
     
     annotations = get_annotations_by_video(video)
 
+    print(annotations)
+
     return jsonify(annotations)
 
 

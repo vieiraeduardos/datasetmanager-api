@@ -10,7 +10,7 @@ from tqdm import tqdm
 from faces_clustering import silhuoette
 import keras.backend.tensorflow_backend as tb
 
-from Connection import insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
+from Connection import createPerson, getAllPersons, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
 
 class Clusterizacao:
 
@@ -94,9 +94,17 @@ class Clusterizacao:
             url = tmp[i][0]
             identity = tmp[i][1]
 
-            insert_annotation(video_code, actors[identity], 0, 0, 0, 0, 0, url)            
+            insert_annotation(video_code, actors[identity], 0, 0, 0, 0, 0, url)
 
-        self.clusterizar()
+        if getAllPersons():
+            self.clusterizar()
+            
+        else:
+            persons_code = createPerson(name="Fulano", email="fulano@example.com", profile_photo=tmp[0][0])
+
+            for code in actors:
+                update_actor(code, persons_code)
+
 
     def get_number_clusters(self, clusters):
         num = []
