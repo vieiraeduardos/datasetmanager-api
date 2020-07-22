@@ -5,12 +5,12 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from faces_clustering import get_files_folder, FeatureExtractor
+from app.faces_clustering import get_files_folder, FeatureExtractor
 from tqdm import tqdm
-from faces_clustering import silhuoette
+from app.faces_clustering import silhuoette
 import keras.backend.tensorflow_backend as tb
 
-from Connection import createPerson, getAllPersons, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
+from app.Connection import createPerson, getAllPersons, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
 
 class Clusterizacao:
 

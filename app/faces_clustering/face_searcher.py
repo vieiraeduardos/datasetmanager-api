@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import cv2
-from faces_clustering import FeatureExtractor
+from app.faces_clustering import FeatureExtractor
 from sklearn.preprocessing import MinMaxScaler
 
 

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-from faces_clustering import FeatureExtractor
+from app.faces_clustering import FeatureExtractor
 from sklearn.cluster import KMeans
 from sklearn.cluster import AffinityPropagation
 from sklearn.mixture import GaussianMixture

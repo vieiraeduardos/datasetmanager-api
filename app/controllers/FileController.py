@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 
-from Connection import getPersonCodeByName, createActor, createPerson, getVideoCodeByFilename, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
+from app.Connection import getPersonCodeByName, createActor, createPerson, getVideoCodeByFilename, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
 
 class FileControler():
     def __init__(self, file_path):
