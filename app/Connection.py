@@ -181,8 +181,8 @@ def insert_annotation(video_code, actor_video, x, y, w, h, time, path):
     mydb = init()
     mycursor = mydb.cursor()
 
-    sql = ("INSERT INTO Annotations(Videos_code, Actors_code, x, y, w, h, time, path) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)")
-    val = (int(video_code), int(actor_video), int(x), int(y), int(w), int(h), int(time), path)
+    sql = ("INSERT INTO Annotations(Videos_code, Actors_code, x, y, w, h, time, path, isRight) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+    val = (int(video_code), int(actor_video), int(x), int(y), int(w), int(h), int(time), path, True)
 
     mycursor.execute(sql, val)
 

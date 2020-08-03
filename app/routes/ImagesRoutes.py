@@ -12,6 +12,10 @@ from app.controllers.FileController import FileControler
 
 from app import app
 
+UPLOAD_FOLDER = 'app/static/'
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 @app.route('/api/image/', methods=["POST"])
 def get_post_image():
     path = request.form.get("path")

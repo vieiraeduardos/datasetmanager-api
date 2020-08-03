@@ -20,8 +20,8 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/api/videos/example/", methods=["GET"])
 def return_video_example():
-    path = "static/profile_photos/nba.mp4"
-    return send_file(path, attachment_filename="video.mp4")
+    path = r"static/$2b$14$AcEL9Lg0OXaL0Nc8QxqbDemo2OKwNHRUycbkGRYSf6kIaaanGAgG/$2b$14$AcEL9Lg0OXaL0Nc8QxqbDemo2OKwNHRUycbkGRYSf6kIaaanGAgG\frame_90.jpg"
+    return send_file(path, attachment_filename="video.jpg")
 
 
 @app.route('/api/v2/videos/', methods=['POST'])

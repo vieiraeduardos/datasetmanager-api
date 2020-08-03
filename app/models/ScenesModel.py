@@ -29,7 +29,7 @@ class ScenesModel():
         mydb = ConnectionFactory().getConnection()
         mycursor = mydb.cursor()
 
-        mycursor.execute("select * from Scenes where Videos_code={}".format(self.videosCode))
+        mycursor.execute("SELECT * FROM Scenes WHERE Videos_code={}".format(self.videosCode))
 
         myresult = mycursor.fetchall()
 

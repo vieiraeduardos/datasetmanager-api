@@ -60,14 +60,15 @@ def silhuoette(X, alg = "kmeans", max_dec = 5):
         best_labels = [0]*len(X)   
 
     #silhuette_plot = silhuette_plot/max(silhuette_plot)
-    ax1.plot(x_plot , silhuette_plot, label='silhuoette')
     #sse_plot = sse_plot/max(sse_plot)
     #ax1.plot(x_plot , sse_plot, label='inertia')
-    ax1.set_xticks([i+1 for i in range(n_clusters)])
-    ax1.legend()
-    ax1.set_xlabel("Number of clusters")
-    ax1.set_ylabel("Silhouette score")
-    plt.show()
+    
+    #ax1.plot(x_plot , silhuette_plot, label='silhuoette')
+    #ax1.set_xticks([i+1 for i in range(n_clusters)])
+    #ax1.legend()
+    #ax1.set_xlabel("Number of clusters")
+    #ax1.set_ylabel("Silhouette score")
+    #plt.show()
 
     print("Best cluster number is {len(set(best_labels))}")
 

@@ -35,7 +35,8 @@ class Clusterizacao:
             if ret == False:
                 break
             if i%fps == 0:
-                cv2.imwrite('{}/frame_{}.jpg'.format(dir_path, i), frame)
+                path = "{}\\imagem{}.jpg".format(dir_path, i)
+                cv2.imwrite(path, frame)
             i+=1
 
         #Get urls
@@ -94,7 +95,11 @@ class Clusterizacao:
             url = tmp[i][0]
             identity = tmp[i][1]
 
-            insert_annotation(video_code, actors[identity], 0, 0, 0, 0, 0, url)
+            vetor = url.split("/")
+
+            new_path = vetor[1] + "/" + vetor[2] + "/" + vetor[3]
+
+            insert_annotation(video_code, actors[identity], 0, 0, 0, 0, 0, new_path)
 
         if getAllPersons():
             self.clusterizar()
