@@ -102,7 +102,7 @@ def api_add_description_to_scenes(video):
     return jsonify({"scene_code": scene_code})
 
 
-# adiciona descrição a trecho de vídeo
+# exporta descrições de trechos do vídeo
 @app.route("/api/videos/<int:video>/scenes/", methods=["GET"])
 def api_get_all_scenes_by_video(video):
     sm = ScenesModel(videosCode=video)
