@@ -5,6 +5,7 @@
 #pastas estática
 annotations.pkl
 demo/*
+static/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
