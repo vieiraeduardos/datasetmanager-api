@@ -73,9 +73,9 @@ def api_videos_to_scenes():
 
         video.save(PATH_TO_VIDEO)
 
-        controller = VideosController(file_path=PATH_TO_VIDEO)
+        controller = VideosController(filename=hash_filename, file_path=PATH_TO_VIDEO)
 
-        controller.video_to_scenes()
+        controller.save()
 
         return "OK"
     else:
