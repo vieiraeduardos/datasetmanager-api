@@ -12,7 +12,7 @@ from app.controllers.FileController import FileControler
 
 from app import app
 
-UPLOAD_FOLDER = 'static/'
+UPLOAD_FOLDER = 'app/static/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/api/reports/csv')
