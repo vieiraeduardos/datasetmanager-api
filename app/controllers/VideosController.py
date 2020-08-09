@@ -1,4 +1,4 @@
-from app.Connection import createPerson, getAllPersons, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
+from app.Connection import createPerson, getAllPersons, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos
 
 class VideosController():
     def __init__(self, filename="video.mp4", file_path=""):

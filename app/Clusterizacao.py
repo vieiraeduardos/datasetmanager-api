@@ -10,7 +10,9 @@ from tqdm import tqdm
 from app.faces_clustering import silhuoette
 import keras.backend.tensorflow_backend as tb
 
-from app.Connection import createPerson, getAllPersons, insert_actor, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos, update_actor
+from app.Connection import createPerson, getAllPersons, get_last_id, insert_video, insert_annotation, get_all_annotations, get_all_videos
+
+from app.models.ActorsModel import ActorsModel
 
 class Clusterizacao:
 
@@ -84,7 +86,9 @@ class Clusterizacao:
 
         actors = []
         for i in range(num):
-            insert_actor()
+            am = ActorsModel()
+            am.create()
+            #insert_actor()
             last_id = get_last_id()
 
             actors.append(last_id)
@@ -103,12 +107,15 @@ class Clusterizacao:
 
         if getAllPersons():
             self.clusterizar()
-            
         else:
-            persons_code = createPerson(name="Fulano", email="fulano@example.com", profile_photo=tmp[0][0])
+            vetor = tmp[0][0].split("/")
+
+            new_path = vetor[1] + "/" + vetor[2] + "/" + vetor[3]
+            persons_code = createPerson(name="Fulano", email="fulano@example.com", profile_photo=new_path)
 
             for code in actors:
-                update_actor(code, persons_code)
+                am = ActorsModel(code=code, Persons_code=persons_code)
+                am.update()
 
 
     def get_number_clusters(self, clusters):
@@ -141,7 +148,7 @@ class Clusterizacao:
         annotations = get_all_annotations()
 
         for annotation in annotations:
-            frames_url.append(annotation[1])
+            frames_url.append("app/" + annotation[1])
 
         # Getting URLs
         extractor = FeatureExtractor('senet50')
@@ -193,7 +200,10 @@ class Clusterizacao:
                 
                 if(person != None):
                     print("Actor = {} e Person = {}".format(actor, person))
-                    update_actor(actor, person)
+                    am = ActorsModel(code=actor, Persons_code=person)
+
+                    am.update()
+                    #update(actor, person)
 
     def get_name(self, target, annotation, annotations, clusters):
 

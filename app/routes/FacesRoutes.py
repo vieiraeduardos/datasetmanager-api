@@ -5,7 +5,7 @@ import numpy as np
 import bcrypt
 import io
 import csv
-from app.Connection import updateAnnotations, getAnnotationsByPerson, getAllPersons, insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image, update_image
+from app.Connection import updateAnnotations, getAnnotationsByPerson, getAllPersons, insert_person, get_persons, get_videos, get_annotations_by_video, get_all_annotations, delete_image, update_image
 
 from app.Clusterizacao import Clusterizacao
 from app.controllers.FileController import FileControler
@@ -24,8 +24,6 @@ def api_get_annotations():
     video = request.form.get("video")
     
     annotations = get_annotations_by_video(video)
-
-    print(annotations)
 
     return jsonify(annotations)
 

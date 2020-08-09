@@ -1,19 +1,5 @@
 import mysql.connector
 
-def insert_actor():
-    mydb = init()
-    mycursor = mydb.cursor()
-
-    sql = "INSERT INTO Actors (name, email) VALUES (%s, %s)"
-    val = ("", "")
-    
-    mycursor.execute(sql, val)
-
-    mydb.commit()
-
-    print("Uma pessoa foi cadastrada com sucesso!")
-
-
 def get_last_id():
     mydb = init()
     mycursor = mydb.cursor()
@@ -231,34 +217,6 @@ def get_all_videos():
     myresult = mycursor.fetchall()
 
     return myresult
-
-def get_actor(code):
-    mydb = init()
-    mycursor = mydb.cursor()
-
-    mycursor.execute("select * from Persons where code = {}".format(code))
-
-    myresult = mycursor.fetchone()
-
-    return myresult
-
-
-def update_actor(actor, person):
-    mydb = init()
-    mycursor = mydb.cursor()
-
-    p = get_actor(person)
-
-    print(person)
-    sql = ("update Actors set name=%s, email=%s, Persons_code=%s where code=%s")
-    val = (p[1], p[2], person, actor)
-
-    mycursor.execute(sql, val)
-
-    mydb.commit()
-
-    print("Actor was successfully updated!")
-
 
 def delete_image(code): 
     mydb = init()

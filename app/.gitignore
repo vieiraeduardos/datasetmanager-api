@@ -3,7 +3,7 @@
 # Edit at https://www.gitignore.io/?templates=python
 
 #pastas estática
-annotations.pkl
+*.pkl
 demo/*
 static/*
 

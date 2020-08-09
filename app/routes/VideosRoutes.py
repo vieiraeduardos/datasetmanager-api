@@ -5,7 +5,7 @@ import numpy as np
 import bcrypt
 import io
 import csv
-from app.Connection import updateAnnotations, getAnnotationsByPerson, getAllPersons, insert_person, get_persons, get_videos, get_annotations_by_video, update_actor, get_actor, get_all_annotations, delete_image, update_image
+from app.Connection import updateAnnotations, getAnnotationsByPerson, getAllPersons, insert_person, get_persons, get_videos, get_annotations_by_video, get_all_annotations, delete_image, update_image
 
 from app.models.ScenesModel import ScenesModel
 
@@ -15,7 +15,6 @@ from app.controllers.VideosController import VideosController
 from app import app
 
 UPLOAD_FOLDER = 'app/static/'
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/api/videos/example/", methods=["GET"])
@@ -37,14 +36,14 @@ def api_get_file():
 
         hash_filename = bcrypt.hashpw(filename.encode('utf-8'), bcrypt.gensalt(14)).decode('utf-8').replace("/", "").replace(".", "")
 
-        os.mkdir(app.config['UPLOAD_FOLDER'] + hash_filename)
+        os.mkdir("app/static/" + hash_filename)
 
-        PATH_TO_VIDEO = os.path.join(app.config['UPLOAD_FOLDER'], hash_filename + '/' + hash_filename + '.mp4')
+        PATH_TO_VIDEO = os.path.join("app/static/", hash_filename + '/' + hash_filename + '.mp4')
 
         file.save(PATH_TO_VIDEO)
 
-        Clusterizacao().processing_video(filename, PATH_TO_VIDEO)
-
+        Clusterizacao().processing_video()
+        
         return "OK"
     else:
         return 'Selecione um arquivo.'
