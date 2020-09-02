@@ -201,7 +201,7 @@ def get_videos():
     mydb = init()
     mycursor = mydb.cursor()
 
-    mycursor.execute("select code, filename from Videos")
+    mycursor.execute("select code, filename, path from Videos")
 
     myresult = mycursor.fetchall()
 

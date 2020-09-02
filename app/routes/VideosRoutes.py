@@ -17,11 +17,13 @@ from app import app
 UPLOAD_FOLDER = 'app/static/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route("/api/videos/example/", methods=["GET"])
-def return_video_example():
+@app.route("/api/videos/example/<filename>", methods=["GET"])
+def return_video_example(filename):
     path = r"static/$2b$14$AcEL9Lg0OXaL0Nc8QxqbDemo2OKwNHRUycbkGRYSf6kIaaanGAgG/$2b$14$AcEL9Lg0OXaL0Nc8QxqbDemo2OKwNHRUycbkGRYSf6kIaaanGAgG\frame_90.jpg"
-    return send_file(path, attachment_filename="video.jpg")
+    
+    path = filename.split(".")[0]
 
+    return send_file("static/" + path + "/" + filename, attachment_filename="video.mp4")
 
 @app.route('/api/v2/videos/', methods=['POST'])
 def api_get_file():
@@ -42,7 +44,7 @@ def api_get_file():
 
         file.save(PATH_TO_VIDEO)
 
-        Clusterizacao().processing_video()
+        Clusterizacao().processing_video(filename, PATH_TO_VIDEO)
         
         return "OK"
     else:
@@ -109,6 +111,24 @@ def api_get_all_scenes_by_video(video):
     scenes = sm.getAllScenesByVideo()
 
     return jsonify(scenes)
+
+    
+# exporta descrições de trechos do vídeo
+@app.route("/api/videos/<int:video>/scenes/all/", methods=["GET"])
+def api_get_all_scenes_by_video_and_faces(video):
+    sm = ScenesModel(videosCode=video)
+    groups = getAllPersons()
+
+    scenes = sm.getAllScenesByVideo()
+
+    result = []
+    for scene in scenes:
+        result.append({
+            "scene": scene,
+            "groups": groups
+            }) 
+
+    return jsonify(result)
 
 
 # apaga descrição a trecho de vídeo
