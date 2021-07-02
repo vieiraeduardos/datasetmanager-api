@@ -15,7 +15,7 @@ Links
 -----
 
 * Website: http://www.telemidia.puc-rio.br/
-* Documentation: 
+* Documentation: https://github.com/vieiraeduardos/datasetmanager-api/blob/master/Documentation/Documentation.pdf
 * Releases: 
 * Code: https://github.com/vieiraeduardos/video-annotation-tool
 * Issue tracker: https://github.com/vieiraeduardos/video-annotation-tool/issues
